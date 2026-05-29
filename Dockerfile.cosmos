@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Build it with:
+# docker build -t harmonizer-cosmos-env -f Dockerfile.cosmos .
+
+ARG BASE="nvcr.io/nvidia/pytorch:25.10-py3"
+
+# ------------------------------------------------------------
+# Copied from https://github.com/nvidia-cosmos/cosmos-predict2.5/blob/main/docker/nightly.Dockerfile
+# ------------------------------------------------------------
+
+# Experimental dockerfile using latest nvidia pytorch container.
+
+# Stage 1: Git Repository
+FROM ubuntu:latest AS repository
+COPY . /harmonizer-codebase
+
+# Stage 2: base
+FROM ${BASE} as base
+
+# Set the DEBIAN_FRONTEND environment variable to avoid interactive prompts during apt operations.
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install packages
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl ffmpeg git libx11-dev tree wget emacs-nox
+
+# Install just: https://just.systems/man/en/pre-built-binaries.html
+RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin --tag 1.42.4
+
+# Install cosmos-predict2.5 dependencies
+RUN git clone --recursive --depth 1 https://github.com/nvidia-cosmos/cosmos-predict2.5.git /cosmos-predict2.5
+WORKDIR /cosmos-predict2.5
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r docker/nightly-requirements.txt
+
+# ------------------------------------------------------------
+# FROM nvcr.io/nvidia/cosmos/cosmos-predict2-container:1.2
+# ------------------------------------------------------------
+
+# Copy data from the git repository
+WORKDIR /harmonizer-codebase
+COPY --from=repository /harmonizer-codebase/requirements.txt /harmonizer-codebase/requirements.txt
+COPY --from=repository /harmonizer-codebase/tokenizer.patch /harmonizer-codebase/tokenizer.patch
+COPY --from=repository /harmonizer-codebase/text2image_dit.patch /harmonizer-codebase/text2image_dit.patch
+
+# Install dependencies
+# See https://github.com/nvidia-cosmos/cosmos-predict2 to install from source
+RUN pip install --no-deps "cosmos-predict2==1.0.9" && \
+    pip install -r requirements.txt && \
+    pip install torchmetrics[image]
+# Apply the patches
+RUN patch /usr/local/lib/python3.12/dist-packages/cosmos_predict2/tokenizers/tokenizer.py tokenizer.patch
+RUN patch /usr/local/lib/python3.12/dist-packages/cosmos_predict2/models/text2image_dit.py text2image_dit.patch
+
+# Set the workspace
+WORKDIR /work
+
+# Set the entrypoint
+ENTRYPOINT ["/bin/bash"]

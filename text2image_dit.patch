@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+--- /usr/local/lib/python3.12/dist-packages/cosmos_predict2/models/text2image_dit.py	2025-12-12 15:24:26.601524722 -0800
++++ /usr/local/lib/python3.12/dist-packages/cosmos_predict2/models/text2image_dit.py	2025-12-12 15:25:05.000000000 -0800
+@@ -19,6 +19,7 @@
+ from dataclasses import dataclass
+ from enum import Enum
+ from typing import Any
++from packaging.version import Version
+ 
+ import numpy as np
+ import torch
+@@ -32,7 +33,11 @@
+ from torch.distributed.fsdp import fully_shard
+ from torch.utils.checkpoint import CheckpointPolicy, create_selective_checkpoint_contexts
+ from torchvision import transforms
+-from transformer_engine.pytorch.attention import DotProductAttention, apply_rotary_pos_emb
++from transformer_engine.pytorch.attention import DotProductAttention
++if Version(te.__version__) >= Version("2.4.0"):
++    from transformer_engine.pytorch.attention.rope import apply_rotary_pos_emb
++else:
++    from transformer_engine.pytorch.attention import apply_rotary_pos_emb
+ 
+ from cosmos_predict2.conditioner import DataType
+ from cosmos_predict2.module.a2a_cp import MinimalA2AAttnOp, NattenA2AAttnOp
