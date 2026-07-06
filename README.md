@@ -75,15 +75,15 @@ python inference_pix2pix_turbo_harmonizer.py \
     --timestep 250 --resolution 1024 --use_sched;
 ```
 
-## Download Training Data (Coming Soon!)
+## Download Training Data
 
-The Harmonizer training set is composed of synthetic–real image pairs from five data sources, each targeting a specific failure mode of neural-reconstruction renderings. The full assembled dataset is hosted on Hugging Face:
+The Harmonizer training set is composed of synthetic–real image pairs from five data sources, each targeting a specific failure mode of neural-reconstruction renderings. The full assembled dataset is available on [Hugging Face](https://huggingface.co/datasets/nvidia/Harmonizer-Dataset):
 
 ```sh
 hf download nvidia/Harmonizer-Dataset --repo-type dataset --local-dir data
 ```
 
-The downloaded archive follows the JSON layout described in [Data Preparation](#1-data-preparation).
+The downloaded dataset is organized in the paired-directory layout described in [Data Preparation](#1-data-preparation).
 
 ### Data sources and curation pipelines
 
@@ -113,28 +113,19 @@ The training set combines five complementary data sources, each targeting a spec
 
 ### 1. Data Preparation
 
-Prepare your dataset in the following JSON format:
+The released dataset unpacks into the following paired-directory layout:
 
-```json
-{
-  "train": {
-    "{data_id}": {
-      "image": "{PATH_TO_IMAGE}",
-      "target_image": "{PATH_TO_TARGET_IMAGE}",
-      "prompt": "remove degradation"
-    }
-  },
-  "test": {
-    "{data_id}": {
-      "image": "{PATH_TO_IMAGE}",
-      "target_image": "{PATH_TO_TARGET_IMAGE}",
-      "prompt": "remove degradation"
-    }
-  }
-}
+```
+data/
+├── train_A/
+├── train_B/
+├── train_prompts.json
+├── test_A/
+├── test_B/
+└── test_prompts.json
 ```
 
-If you downloaded the dataset from Hugging Face (see [Download Training Data](#download-training-data)), the JSON manifest is already in this format. To regenerate or extend any individual data source, see the per-source curation codebases linked above. The general procedure to generate training image pairs using NuRec can also be found in the [dataset preparation tutorial](./doc/dataset_preparation_tutorial.md).
+Set `DATASET_FOLDER` to the unpacked dataset root. To regenerate or extend any individual data source, see the per-source curation codebases linked above. The general procedure to generate training image pairs using NuRec can also be found in the [dataset preparation tutorial](./doc/dataset_preparation_tutorial.md).
 
 ### 2. Multiple GPU Training Command
 
