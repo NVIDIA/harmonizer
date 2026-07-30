@@ -6,6 +6,8 @@
 CVPR 2026  
 [Project Page](https://research.nvidia.com/labs/sil/projects/diffusion-harmonizer/) | [Paper](https://arxiv.org/abs/2602.24096)
 
+NVIDIA Harmonizer is an online generative enhancement framework built on NVIDIA Cosmos that improves NVIDIA Omniverse NuRec renderings. It corrects novel-view artifacts, lighting, and shadow, and re-harmonizes inserted assets into reconstructed scenes for autonomous vehicle and robotics simulation.
+
 <p align="center">
   <img src="media/teaser.gif" alt="Harmonizer teaser" width="80%">
 </p>
