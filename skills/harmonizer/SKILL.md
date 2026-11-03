@@ -68,7 +68,7 @@ the DiffusionHarmonizer model.
 **Do NOT use this skill when:**
 
 - The user wants to train or render the 3D reconstruction itself
-  (use the `nurec` skills).
+  (use the [`nurec`](https://github.com/NVIDIA/nurec/blob/main/skills/nurec/SKILL.md) skills).
 - The user wants to convert raw sensor data to NCore V4 (use
   [`ncore-data-conversion`](https://github.com/NVIDIA/ncore/blob/main/skills/ncore-data-conversion/SKILL.md)).
 - The user wants a generic photo enhancer. DiffusionHarmonizer
@@ -76,8 +76,8 @@ the DiffusionHarmonizer model.
   object-insertion failures.
 - The user only wants NuRec inline rendering with
   `--enable-difix`. That remains a NuRec runtime feature; use the
-  `nurec` skills for the complete `serve-grpc` / `render-grpc`
-  command shape.
+  [`nurec`](https://github.com/NVIDIA/nurec/blob/main/skills/nurec/SKILL.md) skills for the complete `serve-grpc` /
+  `render-grpc` command shape.
 
 ## What changed from the older Fixer skill
 
