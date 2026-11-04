@@ -6,7 +6,7 @@ description: >-
   fine-tune novel-view frames from NuRec / 3DGS / NeRF
   reconstructions. Do NOT use for training the 3D reconstruction
   itself (use the `nurec` skills) or for sensor-to-NCore
-  conversion (use `ncore`).
+  conversion (use `ncore-data-conversion`).
 version: "0.5.0"
 tools:
   - Shell
@@ -68,16 +68,16 @@ the DiffusionHarmonizer model.
 **Do NOT use this skill when:**
 
 - The user wants to train or render the 3D reconstruction itself
-  (use the `nurec` skills).
+  (use the [`nurec`](https://github.com/NVIDIA/nurec/blob/main/skills/nurec/SKILL.md) skills).
 - The user wants to convert raw sensor data to NCore V4 (use
-  `ncore`).
+  [`ncore-data-conversion`](https://github.com/NVIDIA/ncore/blob/main/skills/ncore-data-conversion/SKILL.md)).
 - The user wants a generic photo enhancer. DiffusionHarmonizer
   is tuned for neural-reconstruction artifacts and
   object-insertion failures.
 - The user only wants NuRec inline rendering with
   `--enable-difix`. That remains a NuRec runtime feature; use the
-  `nurec` skills for the complete `serve-grpc` / `render-grpc`
-  command shape.
+  [`nurec`](https://github.com/NVIDIA/nurec/blob/main/skills/nurec/SKILL.md) skills for the complete `serve-grpc` /
+  `render-grpc` command shape.
 
 ## What changed from the older Fixer skill
 
