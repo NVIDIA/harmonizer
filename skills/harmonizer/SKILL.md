@@ -28,7 +28,7 @@ dependencies:
   - git
   - huggingface_hub
 metadata:
-  author: NVIDIA NRS <nurec-skills@nvidia.com>
+  author: NVIDIA
   tags:
     - nurec
     - fixer
